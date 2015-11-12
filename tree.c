@@ -157,7 +157,7 @@ void levelTraverse(TreeNode* root){
 
 // test all the 4 traverses
 void testTraverse(TreeNode* root){
-	printf("Traverse data && leftTree && rightTree:\n");
+    printf("Traverse data && leftTree && rightTree:\n");
     preTraverse(root);
     printf("\nTraverse leftTree && data && rightTree:\n");
     inTraverse(root);
