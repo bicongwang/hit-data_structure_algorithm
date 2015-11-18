@@ -7,8 +7,8 @@ typedef struct LinkedNode{
     struct LinkedNode* next;
 }LinkedNode;
 
-LinkedNode* pop(LinkedNode* top);
-LinkedNode* push(LinkedNode* top,ElementType element);
+void* pop(LinkedNode** ptop);
+void* push(LinkedNode** ptop,ElementType element);
 
 int main()
 {
@@ -16,11 +16,11 @@ int main()
     char* new_str = "3y-*ay2!/-";
     LinkedNode* top = NULL;
     while(*new_str){           // push once,then check all the possible pop
-        top = push(top,*old_str);
+        push(&top,*old_str);
         old_str++;
         printf("X");
         while(top && top->element == *new_str){
-            top = pop(top);
+            pop(&top);
             new_str++;
             printf("S");
         }
@@ -31,7 +31,8 @@ int main()
 /*
  *  pop an element,return the last top's element
  */
-LinkedNode* pop(LinkedNode* top){
+void* pop(LinkedNode** ptop){
+    LinkedNode* top = *ptop;
     if(!top) return NULL;
     LinkedNode* last_top = top;
     top = top->next;
@@ -42,7 +43,8 @@ LinkedNode* pop(LinkedNode* top){
 /*
  * push a new element to the stack
  */
-LinkedNode* push(LinkedNode* top,ElementType element){
+void* push(LinkedNode** ptop,ElementType element){
+    LinkedNode* top = *ptop;
     LinkedNode* new_top = (LinkedNode*)malloc(sizeof(LinkedNode));
     new_top->element = element;
     new_top->next = top;
