@@ -16,6 +16,6 @@ int main()
         sum += price * count;
         past = price;
     }
-    printf("%lld\n",sum);
+    printf("%lld",sum);
     return 0;
 }
