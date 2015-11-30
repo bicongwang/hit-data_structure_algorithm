@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define MAX 1000
+#define MAX 1000           
 void quickSort(int a[],int start,int end);
 void printArray(int a[],int n);
 int* createRandomArray(int n);
@@ -13,12 +13,12 @@ int main()
     return 0;
 }
 void quickSort(int a[],int start,int end){
-    if(end - start<1){
+    if(end - start<1){         // min of length is 2
         return;
     }
     int i = start;
     int j = end;
-    int temp = a[start];
+    int temp = a[start];              // middle number.
     while(i<j){
         while(i<j){
             if(a[j] < temp){
@@ -39,7 +39,7 @@ void quickSort(int a[],int start,int end){
     quickSort(a,start,i-1);
     quickSort(a,i+1,end);
 }
-void printArray(int a[],int n){
+void printArray(int a[],int n){      // print the array.
     int i;
     for(i=0;i<n;i++){
         printf("%d\n",a[i]);
@@ -49,7 +49,7 @@ void printArray(int a[],int n){
 int* createRandomArray(int n){
     int i;
     int* arr = (int*)malloc(sizeof(int)*n);
-    srand(time(NULL));
+    srand(time(NULL));            // a seed for the current timer.
     for(i=0;i<n;i++){
         arr[i] = rand();
     }
