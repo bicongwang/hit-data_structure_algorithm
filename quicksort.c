@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define MAX 1000           
+#define MAX 250
 void quickSort(int a[],int start,int end);
 void printArray(int a[],int n);
 int* createRandomArray(int n);
@@ -42,7 +42,7 @@ void quickSort(int a[],int start,int end){
 void printArray(int a[],int n){      // print the array.
     int i;
     for(i=0;i<n;i++){
-        printf("%d\n",a[i]);
+        printf("%d ",a[i]);
     }
     printf("\n");
 }
