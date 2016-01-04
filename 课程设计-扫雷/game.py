@@ -1,13 +1,19 @@
 # coding:utf8
 from random import randint
 
-class game(object):
+class Game(object):
 
-    def __init__(self, length=10, width=10, mineNum=10):
+    def __init__(self, length=8, width=10, mineNum=10):
         self.length = length
         self.width = width
         self.mineNum = mineNum
-        self.mapCoord = [[Box()] * (width + 2)] * (length + 2)
+        self.mapCoord = []
+        for i in range(length+2):
+            self.mapCoord.append([])
+            for j in range(width+2):
+                self.mapCoord[i].append(Box())
+        self.createMap()
+
 
     def createMap(self):
         existMineCoords = []
@@ -23,6 +29,10 @@ class game(object):
         for i in range(1, self.length + 1):
             for j in range(1, self.width + 1):
                 self.calculateMineNum(i, j)
+        for i in range(0,self.length + 2):
+            for j in range(0, self.width + 2):
+                if i == 0 or j == 0 or i == self.length + 1 or j == self.width + 1:
+                    self.mapCoord[i][j].openMark = True
 
 
     def calculateMineNum(self, x, y):
@@ -47,10 +57,18 @@ class game(object):
             count += 1
         self.mapCoord[x][y].mineNum = count
 
-
 class Box(object):
 
     def __init__(self, mineNum=0, flag=False, openMark = False):
         self.mineNum = mineNum
         self.flag = flag
         self.openMark = openMark
+
+if __name__ == '__main__':
+    game = Game()
+    mapCoord = game.mapCoord
+    for i in range(len(mapCoord)):
+        for j in range(len(mapCoord[0])):
+            print mapCoord[i][j].mineNum,
+        print
+    print len(mapCoord), len(mapCoord[0])
