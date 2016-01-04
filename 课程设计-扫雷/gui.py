@@ -14,26 +14,42 @@ class App(wx.App):
 
 class Frame(wx.Frame):
 
-    each = 28
+    each = 28  # 每个格子所在矩阵的像素边长
 
     length = 8
     width = 10
     mineNum = 10
+    time = 0
 
-    existNum = length * width - mineNum
+    existClosedNum = length * width - mineNum  # 为了判断胜利条件
+    existMineNum = mineNum
 
     def __init__(self):
         wx.Frame.__init__(self, parent=None, title=u'扫雷', pos=wx.DefaultPosition,
-                          size=wx.DefaultSize)
+                          size=(515, 580))
+
+        icon = wx.Icon('mine.ico', wx.BITMAP_TYPE_ICO)
+        self.SetIcon(icon)
+
+        self.statusBar = self.CreateStatusBar()
+        self.statusBar.SetFieldsCount(2)
+        self.statusBar.SetStatusWidths([-1, -1])
+        self.statusBar.SetStatusText(u"Mine Sweeping", 0)
+        self.statusBar.SetStatusText(u"By wxPython", 1)
+
         self.panel = wx.Panel(self)
+        theme = wx.Image('theme.bmp', wx.BITMAP_TYPE_BMP)
+        wx.StaticBitmap(self.panel, wx.ID_ANY, wx.BitmapFromImage(theme))
         self.SetMenu()
 
+        # 定义所有本程序使用到的图像
         self.numBmp = []
         for i in range(9):
             self.numBmp.append(wx.Bitmap('0'+str(i)+'.bmp', wx.BITMAP_TYPE_BMP))
         self.initBmp = wx.Bitmap('init.png', wx.BITMAP_TYPE_PNG)
         self.flagBmp = wx.Bitmap('flag.bmp', wx.BITMAP_TYPE_BMP)
         self.mineBmp = wx.Bitmap('mine.bmp', wx.BITMAP_TYPE_BMP)
+
 
     def SetMenu(self):
 
@@ -77,14 +93,21 @@ class Frame(wx.Frame):
 
         self.dialog.Show()
 
-
+    # 放置所有的Button
     def OnReset(self, event):
-        self.panel.Destroy()
 
-        self.existNum = self.length * self.width - self.mineNum
-        self.SetSize((self.length*self.each+17, self.width*self.each+60))
-        # self.SetMaxSize((self.length*self.each+17, self.width*self.each+60))
-        # self.SetMinSize((self.length*self.each+17, self.width*self.each+60))
+        self.panel.Destroy()
+        self.timer = wx.Timer(self)
+        self.timer.Start(1000)
+        self.Bind(wx.EVT_TIMER, self.OnTimer, self.timer)
+        self.existClosedNum = self.length * self.width - self.mineNum
+        self.existMineNum = self.mineNum
+        self.time = 0
+        self.statusBar.SetStatusText(u"已用时间：" + str(self.time), 0)
+        self.statusBar.SetStatusText(u"剩余雷数：" + str(self.existMineNum), 1)
+        self.SetSize((self.length*self.each+17, self.width*self.each+84))
+        # self.SetMaxSize((self.length*self.each+17, self.width*self.each+84))
+        # self.SetMinSize((self.length*self.each+17, self.width*self.each+84))
         self.panel = wx.Panel(self, size=(self.length*self.each, self.width*self.each))
         self.mapList = []
         sizeAll = wx.BoxSizer(wx.HORIZONTAL)
@@ -105,7 +128,10 @@ class Frame(wx.Frame):
     def StartGame(self):
         game = Game(self.length, self.width, self.mineNum)
         self.mapCoord = game.mapCoord
-
+        
+    def OnTimer(self, event):
+        self.time += 1
+        self.statusBar.SetStatusText(u"已用时间：" + str(self.time), 0)
 
     def OnLeftClick(self, event):
         id = event.GetId()
@@ -113,17 +139,18 @@ class Frame(wx.Frame):
         y = id % self.width + 1
         button = self.panel.FindWindowById(id)
         button.SetFocus()
+        # 根据格子的属性进行不同的处理
         if not self.mapCoord[x][y].flag and not self.mapCoord[x][y].openMark:
             if self.mapCoord[x][y].mineNum == -1:
-                self.gameLost()
+                self.gameLost() #游戏结束
             elif self.mapCoord[x][y].mineNum == 0:
-                self.breathFirstSearch(x, y)
+                self.breathFirstSearch(x, y)  #广度优先搜索
             else:
                 self.mapCoord[x][y].openMark = True
-                self.existNum -= 1
+                self.existClosedNum -= 1
                 button.SetBitmap(self.numBmp[self.mapCoord[x][y].mineNum])
-            if not self.existNum:
-                self.gameWin()
+            if not self.existClosedNum:
+                self.gameWin() #游戏胜利
 
     def OnRightClick(self, event):
         id = event.GetId()
@@ -131,12 +158,17 @@ class Frame(wx.Frame):
         y = id % self.width + 1
         button = self.panel.FindWindowById(id)
         button.SetFocus()
+        # 改变标记状态
         if not self.mapCoord[x][y].openMark:
             if self.mapCoord[x][y].flag:
                 button.SetBitmap(self.initBmp)
+                self.existMineNum += 1
+                self.statusBar.SetStatusText(u"剩余雷数：" + str(self.existMineNum), 1)
                 self.mapCoord[x][y].flag = False
             else:
                 button.SetBitmap(self.flagBmp)
+                self.existMineNum -= 1
+                self.statusBar.SetStatusText(u"剩余雷数：" + str(self.existMineNum), 1)
                 self.mapCoord[x][y].flag = True
 
 
@@ -154,13 +186,16 @@ class Frame(wx.Frame):
         self.dialog.Close()
 
     def gameLost(self):
+        self.timer.Stop()
         self.showMap()
         wx.MessageBox(u'你失败了！')
 
     def gameWin(self):
+        self.timer.Stop()
         self.showMap()
         wx.MessageBox(u'你胜利了！')
 
+    # 显示所有格子
     def showMap(self):
         mapList = self.mapList
         mapCoord = self.mapCoord
@@ -174,10 +209,14 @@ class Frame(wx.Frame):
                         mapList[i-1][j-1].SetBitmap(self.mineBmp)
 
 
+    # 广度优先搜索，（实际中使用了深度优先搜索，效果一样，如果按照广度优先搜索进行，则需要利用到队列，将周围未开启的格子全部入队，出队时重复该操作）
     def breathFirstSearch(self, x, y):
         if not self.mapCoord[x][y].openMark:
+            if self.mapCoord[x][y].flag:
+                self.existMineNum += 1
+                self.statusBar.SetStatusText(u"剩余雷数：" + str(self.existMineNum), 1)
             self.mapCoord[x][y].openMark = True
-            self.existNum -= 1
+            self.existClosedNum -= 1
             self.mapList[x-1][y-1].SetBitmap(self.numBmp[self.mapCoord[x][y].mineNum])
             if not self.mapCoord[x][y].mineNum:
                 self.breathFirstSearch(x+1, y)

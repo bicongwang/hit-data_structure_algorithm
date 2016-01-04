@@ -15,7 +15,6 @@ class Game(object):
                 self.mapCoord[i].append(Box())
         self.createMap()
 
-
     def createMap(self):
         existMineCoords = []
         i = 0
@@ -27,6 +26,7 @@ class Game(object):
                 i += 1
         for (x, y) in existMineCoords:
             self.mapCoord[x][y].mineNum = -1
+        # 布置地雷
         for i in range(1, self.length + 1):
             for j in range(1, self.width + 1):
                 self.calculateMineNum(i, j)
@@ -34,6 +34,7 @@ class Game(object):
             for j in range(0, self.width + 2):
                 if i == 0 or j == 0 or i == self.length + 1 or j == self.width + 1:
                     self.mapCoord[i][j].openMark = True
+        # 令外圈为打开状态
 
 
     def calculateMineNum(self, x, y):
@@ -58,6 +59,7 @@ class Game(object):
             count += 1
         self.mapCoord[x][y].mineNum = count
 
+# 代表每一个格子的状态
 class Box(object):
 
     def __init__(self, mineNum=0, flag=False, openMark = False):
@@ -65,6 +67,7 @@ class Box(object):
         self.flag = flag
         self.openMark = openMark
 
+# 测试该模板的运行情况
 if __name__ == '__main__':
     game = Game()
     mapCoord = game.mapCoord
