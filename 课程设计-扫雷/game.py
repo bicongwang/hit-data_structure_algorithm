@@ -8,6 +8,7 @@ class Game(object):
         self.width = width
         self.mineNum = mineNum
         self.mapCoord = []
+        # 初始化Box二维列表
         for i in range(length+2):
             self.mapCoord.append([])
             for j in range(width+2):

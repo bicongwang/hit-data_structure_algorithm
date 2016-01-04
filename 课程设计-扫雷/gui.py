@@ -8,12 +8,13 @@ class App(wx.App):
     def OnInit(self):
         frame = Frame()
         frame.Show()
+        self.SetTopWindow(frame)
         return True
 
 
 class Frame(wx.Frame):
 
-    each = 25
+    each = 28
 
     length = 8
     width = 10
@@ -82,6 +83,8 @@ class Frame(wx.Frame):
 
         self.existNum = self.length * self.width - self.mineNum
         self.SetSize((self.length*self.each+17, self.width*self.each+60))
+        # self.SetMaxSize((self.length*self.each+17, self.width*self.each+60))
+        # self.SetMinSize((self.length*self.each+17, self.width*self.each+60))
         self.panel = wx.Panel(self, size=(self.length*self.each, self.width*self.each))
         self.mapList = []
         sizeAll = wx.BoxSizer(wx.HORIZONTAL)
@@ -121,7 +124,6 @@ class Frame(wx.Frame):
                 button.SetBitmap(self.numBmp[self.mapCoord[x][y].mineNum])
             if not self.existNum:
                 self.gameWin()
-            # print self.existNum
 
     def OnRightClick(self, event):
         id = event.GetId()
@@ -187,7 +189,6 @@ class Frame(wx.Frame):
                 self.breathFirstSearch(x-1, y+1)
                 self.breathFirstSearch(x+1, y-1)
                 self.breathFirstSearch(x-1, y-1)
-
 
 
 def main():
