@@ -1,6 +1,11 @@
-# Data-Structure-Algorithm
-Some code for homework or else.
+# Data-Structure-Algorithm  
 
+> 本项目为哈工大《数据结构》课程的实验、作业以及课程设计相关的代码与文档。
 
-数据结构与算法课程的一些代码。
-包括学校的课程以及Coursera上算法基础课程。
+## 项目说明
+
+- 代码基本为大二上学期上传，有很多不完善or设计不合理的部分，但是暂无修改计划。
+- 实验与作业相关的代码均使用C语言进行编写，课程设计为使用Python开发的扫雷小游戏。
+- 扫雷游戏在UI布局上存在Bug，在Windows10系统下测试可用，Ubuntu下存在UI布局问题。
+
+> 学弟学妹如果需要拿去作为火炬请闷声发大财，直接上交的什么鬼- -
